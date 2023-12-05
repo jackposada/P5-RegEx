@@ -8,11 +8,10 @@ jack.posada@some-thing.com
 "wangxx=nerd"@mail.com
 
 invalid emails
-john..doe@example.com
+john..doe@doubledot.com
 .mike@example.com
 mike.@example.com
 john!doe@example.com
-john3doe@example.com
 john$doe@example.com
 john%doe@example.com
 john*doe@example.com

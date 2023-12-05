@@ -94,20 +94,26 @@ def loadFile(inFilename):
 def main(args):
     try:
         # TODO: put the regular expression for your local part here
-        # TODO: put the regular expression for your local part here
-        # pattern4_localuser_variant = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.(?!\\.))[a-z0-9!#$%&'*+/=?^_`{|}~-]*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")"
+
+        # pattern4_localuser_variant = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")"
+        
 
 
-        pattern4_localuser_variant = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")"
-
-        # all extra credit but johndoe@gmail.com are valid
+        # all extra credit but johndoe@gmail.com are valid;
         # pattern4_localuser_variant = "(?:\\([^\\)]*\\))?(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.(?!\\.))[a-z0-9!#$%&'*+/=?^_`{|}~-]*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")(?:\\([^\\)]*\\))?"
+        # pattern4_localuser_variant = r"^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*"
+
+        # ^[a-z0-9!#$%&\'*+/=?^_`{|}~-] can start w any of these but cant start w '.'
+        # [a-z0-9!#$%&\'*+/=?^_`{|}~.-] allows any of these characters
+        # [a-z0-9!#$%&\'*+/=?^_`{|}~-]$ cannot end with a dot
+        # should be working but is not
+        pattern4_localuser_variant = "^[a-z0-9!#$%&'*+/=?^_`{|}~-][a-z0-9!#$%&'*+/=?^_`{|}~.-]*[a-z0-9!#$%&'*+/=?^_`{|}~-]$"
 
         pattern4_domain = "(?:(?:[a-z0-9]+(?:-[a-z0-9]+)*\\.)+[a-z0-9]+(?:-[a-z0-9]+)*|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])"
         
         pattern5 = pattern4_localuser_variant + "@" + pattern4_domain
+        # pattern5 = "((?!.*\.\.)[-!#-'*+/-9=?A-Z^-~]+(\.[-!#-'*+/-9=?A-Z^-~]+)*|\"([]!#-[^-~ \t]|(\\[\t -~]))+\")@([-!#-'*+/-9=?A-Z^-~]+(\.[-!#-'*+/-9=?A-Z^-~]+)*|\[[\t -Z^-~]*])"
         # Complete email pattern
-        # pattern5 = pattern4_localuser_variant + "@" + pattern4_domain
         # pattern5 = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])"
 
 
