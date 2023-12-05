@@ -1,0 +1,21 @@
+valid emails
+john.doe@example.com
+john.doe(comment)@example.com
+(comment)john.doe@example.com
+johndoe@hellooo.com
+"john..doe"@example.com
+jack.posada@some-thing.com
+"wangxx=nerd"@mail.com
+
+invalid emails
+john..doe@example.com
+.mike@example.com
+mike.@example.com
+john!doe@example.com
+john3doe@example.com
+john$doe@example.com
+john%doe@example.com
+john*doe@example.com
+john(doe@example.com
+johndoe@-example.com
+johndoe@example-

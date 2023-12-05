@@ -44,7 +44,8 @@ def search(inPatternString, inText):
     r = re.compile(inPatternString, re.IGNORECASE)
     m = r.finditer(inText)
     totalCount = 0
-
+    uniqueCount = set()
+    emailCounts = {}
     # print("\n" + "PATTERN is " + inPatternString + "\tTEXT is " + inText)
     for match in m: # while
         startIndex = match.start()
@@ -64,13 +65,15 @@ def search(inPatternString, inText):
 
         if isLengthValid(str0):
             totalCount += 1
+            uniqueCount.add(str0)
+            if emailCounts.get(str0) is None:
+                emailCounts[str0] = 1
+            else:
+                emailCounts[str0] += 1
 
-            #
-            # TODO: other meaningful operations
-            #
 
     # print("Total matched = " + str(totalCount))
-    return totalCount
+    return totalCount, uniqueCount
 
 def loadFile(inFilename):
     sb = [] # StringBuffer
@@ -89,9 +92,22 @@ def loadFile(inFilename):
 def main(args):
     try:
         # TODO: put the regular expression for your local part here
-        pattern4_localuser_variant = "TODO-LOCAL"
-        pattern4_domain = "TODO-DOMAIN"
+        # TODO: put the regular expression for your local part here
+        # pattern4_localuser_variant = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.(?!\\.))[a-z0-9!#$%&'*+/=?^_`{|}~-]*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")"
+
+
+        pattern4_localuser_variant = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")"
+
+        # all extra credit but johndoe@gmail.com are valid
+        # pattern4_localuser_variant = "(?:\\([^\\)]*\\))?(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.(?!\\.))[a-z0-9!#$%&'*+/=?^_`{|}~-]*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")(?:\\([^\\)]*\\))?"
+
+        pattern4_domain = "(?:(?:[a-z0-9]+(?:-[a-z0-9]+)*\\.)+[a-z0-9]+(?:-[a-z0-9]+)*|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])"
+        
         pattern5 = pattern4_localuser_variant + "@" + pattern4_domain
+        # Complete email pattern
+        # pattern5 = pattern4_localuser_variant + "@" + pattern4_domain
+        # pattern5 = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])"
+
 
         if not args:
             print("Use python script_name.py FILE")
@@ -101,8 +117,11 @@ def main(args):
         print("My regular expression is " + pattern5)
         print("My regular expression works as follows: the FIRST part, ..., specifies ... ; the SECOND part, ..., specifies ... (TODO)")
 
-        totalCount = search(pattern5, text2) # pattern5
+        totalCount, uniqueCount = search(pattern5, text2) # pattern5
         print("The total # is " + str(totalCount))
+        print("The Unique total # is " + str(len(uniqueCount)))
+        for u in uniqueCount:
+            print(u)
     except Exception as ex:
         print(ex)
 
