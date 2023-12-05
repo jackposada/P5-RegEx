@@ -2,8 +2,12 @@ john.doe@example.com
 johndoe@hellooo.com
 "john..doe"@example.com
 jack.posada@some-thing.com
+"adam.vinch@gmail.com"
+"adam.vinch@gmail.com"
+"test.test2@gmail.com"
+"test.test2@gmail.com"
+"test.test2@gmail.com"
 "wangxx=nerd"@mail.com
-
 invalid emails
 john..doe@example.com
 .mike@example.com

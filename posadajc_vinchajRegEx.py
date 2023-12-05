@@ -67,13 +67,15 @@ def search(inPatternString, inText):
             totalCount += 1
             uniqueCount.add(str0)
             if emailCounts.get(str0) is None:
-                emailCounts[str0] = 1
+                emailCounts[str0] = 1 
             else:
                 emailCounts[str0] += 1
 
-
+    emailCountsSorted = [(email, count) for email, count in emailCounts.items()]
+    emailCountsSorted.sort(key=lambda emailPair: emailPair[1])
+    
     # print("Total matched = " + str(totalCount))
-    return totalCount, uniqueCount
+    return totalCount, uniqueCount, emailCountsSorted
 
 def loadFile(inFilename):
     sb = [] # StringBuffer
@@ -117,11 +119,17 @@ def main(args):
         print("My regular expression is " + pattern5)
         print("My regular expression works as follows: the FIRST part, ..., specifies ... ; the SECOND part, ..., specifies ... (TODO)")
 
-        totalCount, uniqueCount = search(pattern5, text2) # pattern5
+        totalCount, uniqueCount, emailCounts = search(pattern5, text2) # pattern5
         print("The total # is " + str(totalCount))
         print("The Unique total # is " + str(len(uniqueCount)))
         for u in uniqueCount:
             print(u)
+
+        print()
+        for pair in emailCounts:
+            print(pair[0] + ": " + str(pair[1]))
+
+
     except Exception as ex:
         print(ex)
 
