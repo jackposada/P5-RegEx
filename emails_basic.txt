@@ -10,3 +10,4 @@ john..doe@double.com
 mike.@example.com
 johndoe@-example.com
 johndoe@example-
+"wangxx="nerd@mail.com

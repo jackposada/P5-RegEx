@@ -1,4 +1,6 @@
 import re
+import networkx as nx
+
 
 
 """
@@ -48,20 +50,13 @@ def search(inPatternString, inText):
     emailCounts = {}
     # print("\n" + "PATTERN is " + inPatternString + "\tTEXT is " + inText)
     for match in m: # while
-        startIndex = match.start()
-        endIndex = match.end()
+        # startIndex = match.start()
+        # endIndex = match.end()
 
-        print("Pattern is found: start = " + str(startIndex) + ", end = " + str(endIndex))
+        # print("Pattern is found: start = " + str(startIndex) + ", end = " + str(endIndex))
         str0 = match.group(0)
-        print("Group 0 = " + str0)
+        # print("Group 0 = " + str0)
 
-        #
-        # Check https://docs.oracle.com/javase/tutorial/essential/regex/groups.html
-        # https://docs.oracle.com/javase/7/docs/api/java/util/regex/Matcher.html
-        #
-        # str1 = match.group(1)
-        # print("Group 1 = " + str1)
-        #
 
         if isLengthValid(str0):
             totalCount += 1
@@ -88,6 +83,36 @@ def loadFile(inFilename):
 
     return ''.join(sb)
 
+# get each individual email
+def graph_search(file):
+    email_pattern = re.compile(r"<<<<<EMAIL \d+>>>>>")
+    return email_pattern.split(file)[1:]
+# get senders and recfrom email
+def extract_senders_receivers(email_content):
+    # Regular expression to extract sender and receiver
+    sender_pattern = re.compile("[a-z0-9]")
+    receiver_pattern = re.compile(r"To:\s*'?(\S+)'?")
+
+    sender_match = sender_pattern.search(email_content)
+    receiver_match = receiver_pattern.search(email_content)
+
+    sender = sender_match.group(1) if sender_match else None
+    receiver = receiver_match.group(1) if receiver_match else None
+
+    return sender, receiver
+
+def create_email_graph(emails):
+    graph = nx.DiGraph()
+
+    for email_content in emails:
+        sender, receiver = extract_senders_receivers(email_content)
+        print("sender: " + sender + "receiver: " + receiver)
+        if graph.has_edge(sender, receiver):
+            graph[sender][receiver]['weight'] += 1
+        else:
+            graph.add_edge(sender, receiver, weight=1)
+
+    return graph
 #
 # TODO: Refer to the project document for the exact printout requirements
 #
@@ -107,7 +132,9 @@ def main(args):
         # [a-z0-9!#$%&\'*+/=?^_`{|}~.-] allows any of these characters
         # [a-z0-9!#$%&\'*+/=?^_`{|}~-]$ cannot end with a dot
         # should be working but is not
-        pattern4_localuser_variant = "^[a-z0-9!#$%&'*+/=?^_`{|}~-][a-z0-9!#$%&'*+/=?^_`{|}~.-]*[a-z0-9!#$%&'*+/=?^_`{|}~-]$"
+        # pattern4_localuser_variant = r'''(?i)((?!\.)[a-z0-9!#$%&'*+/=?^_`{|}~-]+|"(?:[^\n\\"]|\\[\s\S])*")(?:\([^()]*\))?(?<!\.\.)'''
+        pattern4_localuser_variant = r'[a-z0-9!#$%&\'*+/=?^_`{|}~.-]*'
+
 
         pattern4_domain = "(?:(?:[a-z0-9]+(?:-[a-z0-9]+)*\\.)+[a-z0-9]+(?:-[a-z0-9]+)*|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])"
         
@@ -134,6 +161,9 @@ def main(args):
         print()
         for pair in emailCounts:
             print(pair[0] + ": " + str(pair[1]))
+
+        emails = graph_search(text2)
+        email_graph = create_email_graph(emails)
 
 
     except Exception as ex:
