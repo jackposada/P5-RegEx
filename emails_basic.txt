@@ -3,6 +3,7 @@ johndoe@hellooo.com
 "john..doe"@example.com
 jack.posada@some-thing.com
 "wangxx=nerd"@mail.com
+wangxx@[134.126.20.79]
 
 invalid emails
 john..doe@double.com
@@ -11,3 +12,4 @@ mike.@example.com
 johndoe@-example.com
 johndoe@example-
 "wangxx="nerd@mail.com
+joh[ndoe@hellooo.com

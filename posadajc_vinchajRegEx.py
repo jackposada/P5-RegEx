@@ -1,5 +1,6 @@
 import re
 import networkx as nx
+import matplotlib.pyplot as plt
 
 
 
@@ -50,8 +51,8 @@ def search(inPatternString, inText):
     emailCounts = {}
     # print("\n" + "PATTERN is " + inPatternString + "\tTEXT is " + inText)
     for match in m: # while
-        # startIndex = match.start()
-        # endIndex = match.end()
+        startIndex = match.start()
+        endIndex = match.end()
 
         # print("Pattern is found: start = " + str(startIndex) + ", end = " + str(endIndex))
         str0 = match.group(0)
@@ -85,8 +86,18 @@ def loadFile(inFilename):
 
 # get each individual email
 def graph_search(file):
-    email_pattern = re.compile(r"<<<<<EMAIL \d+>>>>>")
-    return email_pattern.split(file)[1:]
+    for line in file:
+            line = line.strip()
+            print (line.strip())
+            if line.startswith('From:'):
+                print(line)
+                sender = line.split(':', 1)[1].strip()
+            elif line.startswith('To:'):
+                receiver = line.split(':', 1)[1].strip()
+                print(receiver)
+
+    
+
 # get senders and recfrom email
 def extract_senders_receivers(email_content):
     # Regular expression to extract sender and receiver
@@ -126,23 +137,20 @@ def main(args):
 
         # all extra credit but johndoe@gmail.com are valid;
         # pattern4_localuser_variant = "(?:\\([^\\)]*\\))?(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.(?!\\.))[a-z0-9!#$%&'*+/=?^_`{|}~-]*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")(?:\\([^\\)]*\\))?"
-        # pattern4_localuser_variant = r"^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*"
 
-        # ^[a-z0-9!#$%&\'*+/=?^_`{|}~-] can start w any of these but cant start w '.'
-        # [a-z0-9!#$%&\'*+/=?^_`{|}~.-] allows any of these characters
-        # [a-z0-9!#$%&\'*+/=?^_`{|}~-]$ cannot end with a dot
-        # should be working but is not
         # pattern4_localuser_variant = r'''(?i)((?!\.)[a-z0-9!#$%&'*+/=?^_`{|}~-]+|"(?:[^\n\\"]|\\[\s\S])*")(?:\([^()]*\))?(?<!\.\.)'''
-        pattern4_localuser_variant = r'[a-z0-9!#$%&\'*+/=?^_`{|}~.-]*'
-
+        
+        # pattern4_localuser_variant = r'(?:(?!\.)(?:[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*|"[a-z0-9!#$%&\'*+/=?^_`{|}~.-]+")(?<!\.))'
+        # pattern4_localuser_variant = r'(?:(?!\.)(?:[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*|"(?:[\w!#$%&\'*+/=?^_`{|}~. (),:;<>@[\]\\]+|\\[\\"])*")(?<!\.))'
+        
+        # extra credit
+        # pattern4_localuser_variant = r'(?:(?:\([^)]*\))?((?!\.)(?:[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*|"(?:[\w!#$%&\'*+/=?^_`{|}~. (),:;<>@[\]\\]+|\\[\\"])*")(?<!\.))(?:\([^)]*\))?)'
+        pattern4_localuser_variant = r'(?:(?!\.)[a-z0-9!#$%&\*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*(?<!\.)|"[a-z0-9!#$%&\'*+/=?^_`{|}~.-]+")'
 
         pattern4_domain = "(?:(?:[a-z0-9]+(?:-[a-z0-9]+)*\\.)+[a-z0-9]+(?:-[a-z0-9]+)*|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])"
         
         pattern5 = pattern4_localuser_variant + "@" + pattern4_domain
-        # pattern5 = "((?!.*\.\.)[-!#-'*+/-9=?A-Z^-~]+(\.[-!#-'*+/-9=?A-Z^-~]+)*|\"([]!#-[^-~ \t]|(\\[\t -~]))+\")@([-!#-'*+/-9=?A-Z^-~]+(\.[-!#-'*+/-9=?A-Z^-~]+)*|\[[\t -Z^-~]*])"
-        # Complete email pattern
-        # pattern5 = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])"
-
+   
 
         if not args:
             print("Use python script_name.py FILE")
@@ -155,15 +163,50 @@ def main(args):
         totalCount, uniqueCount, emailCounts = search(pattern5, text2) # pattern5
         print("The total # is " + str(totalCount))
         print("The Unique total # is " + str(len(uniqueCount)))
-        for u in uniqueCount:
-            print(u)
+        # for u in uniqueCount:
+        #     print(u)
 
-        print()
-        for pair in emailCounts:
-            print(pair[0] + ": " + str(pair[1]))
+        # print()
+        # for pair in emailCounts:
+        #     print(pair[0] + ": " + str(pair[1]))
+        graph_emails = {}
+        G = nx.DiGraph()
 
-        emails = graph_search(text2)
-        email_graph = create_email_graph(emails)
+        with open(args[0], 'r') as file:
+            sender = None
+            receiver = None
+            for line in file:
+                valid_sender = False
+                valid_receiver = False
+                line = line.strip()
+                if line.startswith('From:'):
+                    # Extract email using regex
+                    sender_match = re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', line)
+                    if sender_match:
+                        valid_sender = True
+                        sender = sender_match.group()
+                        
+                elif line.startswith('To:'):
+                    # Extract email using regex
+                    receiver_match = re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', line)
+                    if receiver_match:
+                        valid_receiver = True
+                        receiver = receiver_match.group()
+                        
+                if valid_sender and valid_receiver:
+                    if G.has_edge(sender, receiver):
+                        G[sender][receiver]['weight'] += 1
+                    else:
+                        G.add_edge(sender, receiver, weight=1)
+        print("Sender:" + sender)
+        print("Receiver:" + receiver)
+        pos = nx.spring_layout(G)
+        weights = [G[u][v]['weight'] for u, v in G.edges()]
+
+        nx.draw(G, pos, with_labels=True, node_color='skyblue', node_size=1500, edge_color=weights, width=2.0, edge_cmap=plt.cm.Blues)
+        plt.show()
+        # email_graph = create_email_graph(emails)
+        # graph = nx.DiGraph()
 
 
     except Exception as ex:
