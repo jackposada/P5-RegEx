@@ -55,7 +55,8 @@ def search(inPatternString, inText):
         endIndex = match.end()
 
         # print("Pattern is found: start = " + str(startIndex) + ", end = " + str(endIndex))
-        str0 = match.group(0)
+        str = match.group(0)
+        str0 = str.lower()
         # print("Group 0 = " + str0)
 
 
@@ -137,15 +138,15 @@ def main(args):
             for line in file:
                 line = line.strip()
                 if line.startswith('From:'):
-                    sender_match = re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', line)
+                    sender_match = re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', line, re.IGNORECASE)
                     if sender_match:
                         sender = sender_match.group()
-                        senders.append(sender)
+                        senders.append(sender.lower())
                 elif line.startswith('To:'):
-                    receiver_match = re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', line)
+                    receiver_match = re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', line, re.IGNORECASE)
                     if receiver_match:
                         receiver = receiver_match.group()
-                        receivers.append(receiver)
+                        receivers.append(receiver.lower())
 
         for sender, receiver in zip(senders, receivers):
             if G.has_edge(sender, receiver):
@@ -156,7 +157,7 @@ def main(args):
         pos = nx.spring_layout(G, k=2.0)
         nx.draw_networkx_nodes(G, pos, node_size=50)
         edges = nx.draw_networkx_edges(G, pos)
-        nx.draw_networkx_labels(G, pos, font_size=4)
+        nx.draw_networkx_labels(G, pos, font_size=5)
         edge_labels = nx.get_edge_attributes(G, 'weight')
         nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=6)
         plt.show()  
