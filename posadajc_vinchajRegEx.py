@@ -68,87 +68,25 @@ def search(inPatternString, inText):
                 emailCounts[str0] += 1
 
     emailCountsSorted = [(email, count) for email, count in emailCounts.items()]
-    emailCountsSorted.sort(key=lambda emailPair: emailPair[1])
+    emailCountsSorted.sort(key=lambda emailPair: emailPair[1], reverse=True)
     
-    # print("Total matched = " + str(totalCount))
+
     return totalCount, uniqueCount, emailCountsSorted
 
-def loadFile(inFilename):
-    sb = [] # StringBuffer
 
-    with open(inFilename, 'r') as file:
-        for st in file:
-            # print(st)
-            sb.append(st.strip().lower())
-            sb.append("\n")
-
-    return ''.join(sb)
-
-# get each individual email
-def graph_search(file):
-    for line in file:
-            line = line.strip()
-            print (line.strip())
-            if line.startswith('From:'):
-                print(line)
-                sender = line.split(':', 1)[1].strip()
-            elif line.startswith('To:'):
-                receiver = line.split(':', 1)[1].strip()
-                print(receiver)
-
+def loadFile(filename):
+    with open(filename, 'r', encoding='utf-8') as file:
+        return file.read()
     
-
-# get senders and recfrom email
-def extract_senders_receivers(email_content):
-    # Regular expression to extract sender and receiver
-    sender_pattern = re.compile("[a-z0-9]")
-    receiver_pattern = re.compile(r"To:\s*'?(\S+)'?")
-
-    sender_match = sender_pattern.search(email_content)
-    receiver_match = receiver_pattern.search(email_content)
-
-    sender = sender_match.group(1) if sender_match else None
-    receiver = receiver_match.group(1) if receiver_match else None
-
-    return sender, receiver
-
-def create_email_graph(emails):
-    graph = nx.DiGraph()
-
-    for email_content in emails:
-        sender, receiver = extract_senders_receivers(email_content)
-        print("sender: " + sender + "receiver: " + receiver)
-        if graph.has_edge(sender, receiver):
-            graph[sender][receiver]['weight'] += 1
-        else:
-            graph.add_edge(sender, receiver, weight=1)
-
-    return graph
-#
-# TODO: Refer to the project document for the exact printout requirements
-#
 def main(args):
-    try:
-        # TODO: put the regular expression for your local part here
-
-        # pattern4_localuser_variant = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")"
-        
-
-
-        # all extra credit but johndoe@gmail.com are valid;
-        # pattern4_localuser_variant = "(?:\\([^\\)]*\\))?(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.(?!\\.))[a-z0-9!#$%&'*+/=?^_`{|}~-]*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")(?:\\([^\\)]*\\))?"
-
-        # pattern4_localuser_variant = r'''(?i)((?!\.)[a-z0-9!#$%&'*+/=?^_`{|}~-]+|"(?:[^\n\\"]|\\[\s\S])*")(?:\([^()]*\))?(?<!\.\.)'''
-        
-        # pattern4_localuser_variant = r'(?:(?!\.)(?:[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*|"[a-z0-9!#$%&\'*+/=?^_`{|}~.-]+")(?<!\.))'
-        # pattern4_localuser_variant = r'(?:(?!\.)(?:[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*|"(?:[\w!#$%&\'*+/=?^_`{|}~. (),:;<>@[\]\\]+|\\[\\"])*")(?<!\.))'
-        
-        # extra credit
+    try:        
+        # extra credit regex for local
+        # worked when tested on small files but runs for ever on the big files
         # pattern4_localuser_variant = r'(?:(?:\([^)]*\))?((?!\.)(?:[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*|"(?:[\w!#$%&\'*+/=?^_`{|}~. (),:;<>@[\]\\]+|\\[\\"])*")(?<!\.))(?:\([^)]*\))?)'
         pattern4_localuser_variant = r'(?:(?!\.)[a-z0-9!#$%&\*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*(?<!\.)|"[a-z0-9!#$%&\'*+/=?^_`{|}~.-]+")'
 
-        pattern4_domain = "(?:(?:[a-z0-9]+(?:-[a-z0-9]+)*\\.)+[a-z0-9]+(?:-[a-z0-9]+)*|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])"
-        
+        pattern4_domain = "(?:(?:[a-z0-9]+(?:-[a-z0-9]+)*\\.)+[a-z0-9]+(?:-[a-z0-9]+)*|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:)\\])"
+
         pattern5 = pattern4_localuser_variant + "@" + pattern4_domain
    
 
@@ -158,55 +96,71 @@ def main(args):
 
         text2 = loadFile(args[0])
         print("My regular expression is " + pattern5)
-        print("My regular expression works as follows: the FIRST part, ..., specifies ... ; the SECOND part, ..., specifies ... (TODO)")
+        print("My regular expression works as follows: the FIRST part, "
+            "(?:(?!\.)[a-z0-9!#$%&\*+/=?^_{|}~-]+, specifies which characters the local "
+            "part can start with and that it cannot start with a '.'; the SECOND part, "
+            "(?:\.[a-z0-9!#$%&\'*+/=?^_{|}~-]+)*(?<!\.), allows the rest of the local "
+            "part to contain a '.' along with the other characters and prevents the "
+            "local part from ending with a dot, the THIRD part, "
+            "\"[a-z0-9!#$%&\'*+/=?^_{|}~.-]+\"), allows for consecutive dots within "
+            "double quotes, the FOURTH part, (?:(?:[a-z0-9]+(?:-[a-z0-9]+)*\\.)+[a-z0-9]+(?:-[a-z0-9]+)*), "
+            "matches teh domain part of the email address and consists of letters and numbers "
+            "that can be broken up by '.' or '-' where there can be zero or more hyphens and one or more "
+            "dots but the hyphen cannot be the first nor last character in the domain part, the FIFTH part, "
+            "|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|"
+            "[a-z0-9-]*[a-z0-9]:)\\], is used when there is an IP address instead of a domain name, the IP "
+            "address must be within brackets and the number ranges ensure an IP address is valid and the "
+            "{3} means the pattern repeats 3 times")
 
-        totalCount, uniqueCount, emailCounts = search(pattern5, text2) # pattern5
+        totalCount, uniqueCount, emailCounts = search(pattern5, text2)
         print("The total # is " + str(totalCount))
         print("The Unique total # is " + str(len(uniqueCount)))
-        # for u in uniqueCount:
-        #     print(u)
 
-        # print()
-        # for pair in emailCounts:
-        #     print(pair[0] + ": " + str(pair[1]))
+        print()
+        with open('posadajc_vinchaj_sorted_emailaddresses.txt', 'w') as file:
+            for pair in emailCounts:
+                file.write(pair[0] + ": " + str(pair[1]) + "\n")
+        with open('posadajc_vinchaj_all_emailaddresses.txt', 'w') as file:
+            for email in uniqueCount:
+                file.write(email + "\n")
+        
         graph_emails = {}
         G = nx.DiGraph()
-
-        with open(args[0], 'r') as file:
+        senders = []
+        receivers = []
+        # GRAPH BONUS QUESTION
+        with open(args[0], 'r', encoding='utf-8') as file:
+            print("PRINTING GRAPH NOW")
+            
             sender = None
             receiver = None
             for line in file:
-                valid_sender = False
-                valid_receiver = False
                 line = line.strip()
                 if line.startswith('From:'):
-                    # Extract email using regex
                     sender_match = re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', line)
                     if sender_match:
-                        valid_sender = True
                         sender = sender_match.group()
-                        
+                        senders.append(sender)
                 elif line.startswith('To:'):
-                    # Extract email using regex
                     receiver_match = re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', line)
                     if receiver_match:
-                        valid_receiver = True
                         receiver = receiver_match.group()
-                        
-                if valid_sender and valid_receiver:
-                    if G.has_edge(sender, receiver):
-                        G[sender][receiver]['weight'] += 1
-                    else:
-                        G.add_edge(sender, receiver, weight=1)
-        print("Sender:" + sender)
-        print("Receiver:" + receiver)
-        pos = nx.spring_layout(G)
-        weights = [G[u][v]['weight'] for u, v in G.edges()]
+                        receivers.append(receiver)
 
-        nx.draw(G, pos, with_labels=True, node_color='skyblue', node_size=1500, edge_color=weights, width=2.0, edge_cmap=plt.cm.Blues)
-        plt.show()
-        # email_graph = create_email_graph(emails)
-        # graph = nx.DiGraph()
+        for sender, receiver in zip(senders, receivers):
+            if G.has_edge(sender, receiver):
+                G[sender][receiver]['weight'] += 1
+            else:
+                G.add_edge(sender, receiver, weight=1)
+
+        pos = nx.spring_layout(G, k=2.0)
+        nx.draw_networkx_nodes(G, pos, node_size=50)
+        edges = nx.draw_networkx_edges(G, pos)
+        nx.draw_networkx_labels(G, pos, font_size=4)
+        edge_labels = nx.get_edge_attributes(G, 'weight')
+        nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=6)
+        plt.show()  
+
 
 
     except Exception as ex:
